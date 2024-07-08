@@ -1,17 +1,71 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { TextInput, Button } from "react-native-paper";
 
 const TodoScreen = () => {
+  const [form, setForm] = useState({
+    title: "",
+  });
+  const [todoList, setTodoList] = useState([
+    {
+      id: 1,
+      title: "First Task",
+    },
+    {
+      id: 2,
+      title: "Second Task",
+    },
+  ]);
+
+  console.log("todoList", todoList);
+
   return (
-    <View>
+    <View style={styles.wrapper}>
+      <TextInput
+        label="Add a task"
+        value={form.title}
+        onChange={(e) => {
+          setForm({ ...form, title: e.target.value });
+        }}
+      />
+      <Button
+        mode="contained"
+        onPress={() => {
+          const newTodoList = [
+            ...todoList,
+            {
+              id: todoList.length + 1,
+              title: form.title,
+            },
+          ];
+          setTodoList(newTodoList);
+          setForm({ title: "" });
+        }}
+        style={{
+          borderRadius: 0,
+        }}
+      >
+        Add
+      </Button>
       <Text>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione magni
-        assumenda porro fugiat, culpa saepe placeat temporibus maxime id quis
-        officiis magnam, nisi, iure unde quam inventore quas at odit? Lorem,
-        ipsum dolor sit amet consectetur adipisicing elit. Cupiditate nesciunt
-        est incidunt amet accusamus reiciendis unde expedita temporibus? Fugit
-        aliquid hic voluptatem sint a perferendis suscipit eligendi, nulla
-        incidunt quam. ghghghg
+        {todoList?.length === 0 ? (
+          "Empty List"
+        ) : (
+          <>
+            <Text>Task List</Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+              }}
+            >
+              {todoList.map((task, index) => (
+                <Text key={index}>{task}</Text>
+              ))}
+            </View>
+          </>
+        )}
       </Text>
     </View>
   );
@@ -19,4 +73,11 @@ const TodoScreen = () => {
 
 export default TodoScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  wrapper: {
+    padding: 20,
+    display: "flex",
+    flexDirection: "column",
+    gap: 20,
+  },
+});
