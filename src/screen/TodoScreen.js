@@ -5,34 +5,45 @@ import { TextInput, Button } from "react-native-paper";
 const TodoScreen = () => {
   const [title, setTitle] = useState("");
   const [todoList, setTodoList] = useState([]);
+  const [editTaskId, setEditTaskId] = useState(null);
+
+  const handleSubmit = () => {
+    if (editTaskId) {
+      // Edit existing task
+      const newTodoList = todoList.map((task) =>
+        task.id === editTaskId ? { ...task, title } : task
+      );
+      setTodoList(newTodoList);
+      setEditTaskId(null);
+    } else {
+      // Add new task
+      const newTodoList = [
+        ...todoList,
+        {
+          id: todoList.length + 1,
+          title: title,
+        },
+      ];
+      setTodoList(newTodoList);
+    }
+    setTitle("");
+  };
 
   return (
     <View style={styles.wrapper}>
       <TextInput
         label="Add a task"
         value={title}
-        onChangeText={(text) => {
-          setTitle(text);
-        }}
+        onChangeText={(text) => setTitle(text)}
       />
       <Button
         mode="contained"
-        onPress={() => {
-          const newTodoList = [
-            ...todoList,
-            {
-              id: todoList.length + 1,
-              title: title,
-            },
-          ];
-          setTodoList(newTodoList);
-          setTitle("");
-        }}
+        onPress={handleSubmit}
         style={{
           borderRadius: 0,
         }}
       >
-        Add
+        {editTaskId ? "Update Task" : "Add Task"}
       </Button>
       {todoList?.length === 0 ? (
         <Text
@@ -54,21 +65,39 @@ const TodoScreen = () => {
               gap: 10,
             }}
           >
-            {todoList.map((task) => {
-              return (
+            {todoList.map((task) => (
+              <View
+                key={task.id}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: 10,
+                  backgroundColor: "#f2f2f2",
+                  borderRadius: 5,
+                }}
+              >
+                <Text>{task.title}</Text>
                 <View
-                  key={task.id}
                   style={{
                     display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    padding: 10,
-                    backgroundColor: "#f2f2f2",
-                    borderRadius: 5,
+                    flexDirection: "row",
                   }}
                 >
-                  <Text>{task.title}</Text>
+                  <Button
+                    onPress={() => {
+                      setTitle(task.title);
+                      setEditTaskId(task.id);
+                    }}
+                    textColor="red"
+                    style={{
+                      borderRadius: 0,
+                    }}
+                  >
+                    Edit
+                  </Button>
                   <Button
                     onPress={() => {
                       const newTodoList = todoList.filter(
@@ -83,8 +112,8 @@ const TodoScreen = () => {
                     Delete
                   </Button>
                 </View>
-              );
-            })}
+              </View>
+            ))}
           </View>
         </>
       )}
