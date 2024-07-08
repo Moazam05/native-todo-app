@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Alert } from "react-native";
 import React, { useState } from "react";
 import { TextInput, Button } from "react-native-paper";
 
@@ -8,6 +8,11 @@ const TodoScreen = () => {
   const [editTaskId, setEditTaskId] = useState(null);
 
   const handleSubmit = () => {
+    if (title.trim() === "") {
+      Alert.alert("Validation Error", "Task title cannot be empty.");
+      return;
+    }
+
     if (editTaskId) {
       // Edit existing task
       const newTodoList = todoList.map((task) =>
